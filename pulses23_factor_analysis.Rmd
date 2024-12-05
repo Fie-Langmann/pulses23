@@ -1,0 +1,205 @@
+---
+title: "Pulses 2023 - drivers and barriers"
+author: "Fie Langmann. ORCID: 0000-0002-7698-1146. Aarhus University, Department of Public Health"
+date: "2024-12-05"
+output: html_document
+---
+
+## This markdown includes code and output for factor analyses
+
+<!-- The factor analysis relates to this article: *Article name here, doi:* -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
+options(width = 100)
+
+#libraries
+library(magrittr)
+library(dplyr)
+library(ltm)
+library(psych)
+library(tidyverse)
+library(factoextra)
+```
+
+```{r data, include=FALSE}
+data <- readr::read_csv("data/pulses23.csv")%>%
+  dplyr::select(starts_with("q_17_"), starts_with("q_18_"), "q_1_1")
+heavy <- data %>% filter(q_1_1 == "Heavy consumer")
+light <- data %>% filter(q_1_1 == "Light consumer")
+
+labels_Q17 <- readxl::read_excel("labels_Q17.xlsx",col_names = FALSE) %>% unlist() %>%  as.vector()
+labels_Q18 <- readxl::read_excel("labels_Q18.xlsx",col_names = FALSE) %>% unlist() %>%  as.vector()
+
+heavy_bar<- heavy %>% filter(!q_17_23==1) %>% dplyr::select(q_17_1:q_17_22)
+heavy_dri<- heavy %>% filter(!q_18_26==1) %>% dplyr::select(q_18_1:q_18_25)
+colnames(heavy_bar) <- labels_Q17
+colnames(heavy_dri) <- labels_Q18
+
+light_bar<- light %>% filter(!q_17_23==1) %>% dplyr::select(q_17_1:q_17_22)
+light_dri<- light %>% filter(!q_18_26==1) %>% dplyr::select(q_18_1:q_18_25)
+colnames(light_bar) <- labels_Q17
+colnames(light_dri) <- labels_Q18
+```
+
+# Heavy users
+
+## FA on tetrachoric correlations
+
+-   Numbers of factor determined with screeplot. Factor should explain more than one variable (eigenvalue \> 1)
+-   Factor analysis with minimum residual for extraction and Varimax for rotation.
+-   Explained variance of total variance in
+
+### Drivers
+
+```{r heavy drivers FA, echo=FALSE}
+# Simple scree plot
+scree(tetrachoric(heavy_dri)$rho, pc = F) # 4 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
+
+fa_result  <- tetrachoric(heavy_dri)$rho %>%
+  fa(nfactors = 4,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+fa_result
+
+# Extract loadings and convert to a data frame
+loadings_melted <- fa_result$loadings %>%
+  unclass() %>%
+  as_tibble(rownames = "Variable") %>%
+  rename_with(~ paste0(., " (", round(fa_result$Vaccounted[2, ] * 100, 1), "%)"), -Variable) %>%
+  pivot_longer(-Variable, names_to = "Factor", values_to = "Loading") %>% 
+  filter(Loading >= 0.5) #Loadings cutoff
+
+# Create the bar plot with loadings values inside the bars
+ggplot(loadings_melted, aes(x = Variable, y = abs(Loading), fill = Loading)) +
+  facet_wrap(~ Factor, nrow = 1) + # Place factors in separate facets
+  geom_bar(stat = "identity") + # Create bars
+  geom_text(aes(label = round(Loading, 2)), 
+            position = position_stack(vjust = 0.5), 
+            color = "black", size = 3.5) + # Add loadings values inside bars
+  coord_flip() + # Flip axes for horizontal labels
+  scale_fill_gradient2(name = "Loadings",
+                       high = "blue", mid = "white", low = "red",
+                       midpoint = 0, guide = FALSE) +
+  ylab("Loading") +
+  theme_bw(base_size = 10) + # Black-and-white theme
+  theme(strip.text = element_text(size = 12),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) # Adjust facet label size
+
+```
+
+### Barriers
+
+```{r heavy barriers FA, echo=FALSE}
+# Simple scree plot
+scree(tetrachoric(heavy_bar)$rho, pc = F) # 3 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
+
+fa_result  <- tetrachoric(heavy_bar)$rho %>%
+  fa(nfactors = 3,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+fa_result
+
+# Extract loadings and convert to a data frame
+loadings_melted <- fa_result$loadings %>%
+  unclass() %>%
+  as_tibble(rownames = "Variable") %>%
+  rename_with(~ paste0(., " (", round(fa_result$Vaccounted[2, ] * 100, 1), "%)"), -Variable) %>%
+  pivot_longer(-Variable, names_to = "Factor", values_to = "Loading") %>% 
+  filter(Loading >= 0.5) #Loadings cutoff
+
+# Create the bar plot with loadings values inside the bars
+ggplot(loadings_melted, aes(x = Variable, y = abs(Loading), fill = Loading)) +
+  facet_wrap(~ Factor, nrow = 1) + # Place factors in separate facets
+  geom_bar(stat = "identity") + # Create bars
+  geom_text(aes(label = round(Loading, 2)), 
+            position = position_stack(vjust = 0.5), 
+            color = "black", size = 3.5) + # Add loadings values inside bars
+  coord_flip() + # Flip axes for horizontal labels
+  scale_fill_gradient2(name = "Loadings",
+                       high = "blue", mid = "white", low = "red",
+                       midpoint = 0, guide = FALSE) +
+  ylab("Loading") +
+  theme_bw(base_size = 10) + # Black-and-white theme
+  theme(strip.text = element_text(size = 12),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) # Adjust facet label size
+```
+
+# Light users
+
+## FA on tetrachoric correlations
+
+-   Numbers of factor determined with screeplot. Factor should explain more than one variable (eigenvalue \> 1)
+-   Factor analysis with minimum residual for extraction and Variamx for rotation.
+-   Explained variance of total variance in
+
+### Drivers
+
+```{r light drivers FA, echo=FALSE}
+# Simple scree plot
+scree(tetrachoric(light_dri)$rho, pc = F) # 5 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
+
+fa_result  <- tetrachoric(light_dri)$rho %>%
+  fa(nfactors = 5,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+fa_result
+
+# Extract loadings and convert to a data frame
+loadings_melted <- fa_result$loadings %>%
+  unclass() %>%
+  as_tibble(rownames = "Variable") %>%
+  rename_with(~ paste0(., " (", round(fa_result$Vaccounted[2, ] * 100, 1), "%)"), -Variable) %>%
+  pivot_longer(-Variable, names_to = "Factor", values_to = "Loading") %>% 
+  filter(Loading >= 0.5) #Loadings cutoff
+
+# Create the bar plot with loadings values inside the bars
+ggplot(loadings_melted, aes(x = Variable, y = abs(Loading), fill = Loading)) +
+  facet_wrap(~ Factor, nrow = 1) + # Place factors in separate facets
+  geom_bar(stat = "identity") + # Create bars
+  geom_text(aes(label = round(Loading, 2)), 
+            position = position_stack(vjust = 0.5), 
+            color = "black", size = 3.5) + # Add loadings values inside bars
+  coord_flip() + # Flip axes for horizontal labels
+  scale_fill_gradient2(name = "Loadings",
+                       high = "blue", mid = "white", low = "red",
+                       midpoint = 0, guide = FALSE) +
+  ylab("Loading") +
+  theme_bw(base_size = 10) + # Black-and-white theme
+  theme(strip.text = element_text(size = 12),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) # Adjust facet label size
+
+```
+
+### Barriers
+
+```{r light barriers FA, echo=FALSE}
+# Simple scree plot
+scree(tetrachoric(light_bar)$rho, pc = F) # 4 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
+
+fa_result  <- tetrachoric(light_bar)$rho %>%
+  fa(nfactors = 4,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+fa_result
+
+# Extract loadings and convert to a data frame
+loadings_melted <- fa_result$loadings %>%
+  unclass() %>%
+  as_tibble(rownames = "Variable") %>%
+  rename_with(~ paste0(., " (", round(fa_result$Vaccounted[2, ] * 100, 1), "%)"), -Variable) %>%
+  pivot_longer(-Variable, names_to = "Factor", values_to = "Loading") %>% 
+  filter(Loading >= 0.5) #Loadings cutoff
+
+# Create the bar plot with loadings values inside the bars
+ggplot(loadings_melted, aes(x = Variable, y = abs(Loading), fill = Loading)) +
+  facet_wrap(~ Factor, nrow = 1) + # Place factors in separate facets
+  geom_bar(stat = "identity") + # Create bars
+  geom_text(aes(label = round(Loading, 2)), 
+            position = position_stack(vjust = 0.5), 
+            color = "black", size = 3.5) + # Add loadings values inside bars
+  coord_flip() + # Flip axes for horizontal labels
+  scale_fill_gradient2(name = "Loadings",
+                       high = "blue", mid = "white", low = "red",
+                       midpoint = 0, guide = FALSE) +
+  ylab("Loading") +
+  theme_bw(base_size = 10) + # Black-and-white theme
+  theme(strip.text = element_text(size = 12),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) # Adjust facet label size
+```
