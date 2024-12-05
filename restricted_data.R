@@ -10,7 +10,6 @@ library(readr)
 # Load and select data ---------------------------------------------------------------
 restricted23 <- readr::read_csv("data/pulses23.csv") %>%
   dplyr::select("q_1_1",
-                starts_with("q_16"),
                 starts_with("q_17_"),
                 starts_with("q_18_"),
                 income,
