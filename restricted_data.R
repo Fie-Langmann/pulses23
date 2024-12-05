@@ -1,5 +1,5 @@
 # Restriction of anonymized data to reduce identifiability.
-ktion af anonymiserede data for at reducere henførbarhed
+
 # Packages ----------------------------------------------------------------
 library(here)
 library(dplyr)
