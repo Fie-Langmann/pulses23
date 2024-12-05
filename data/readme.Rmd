@@ -1,0 +1,1 @@
+the "~/data" folder contains data after initial data management. In this folder any future edits of data and subsets of datasets should be stored so that raw data are not altered.
