@@ -1,0 +1,3 @@
+the "~/data_raw" folder contains a .csv with raw data from the 2023 pulses survey and a .xlsx sheet with meta data explaining the coding of the raw data contained in the .csv file
+
+The create_data.R script explains how the excel data sheet was converted to a .csv
