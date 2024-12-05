@@ -1,6 +1,6 @@
 # How pulses23.csv data was created
 
-# This script contains information and code for loading the pulses21 data as csv files
+# This script contains information and code for loading the pulses23 data as csv files
 # Only rerun this, if you messed up
 # Packages and libraries
 library(readxl)
