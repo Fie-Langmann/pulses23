@@ -57,7 +57,7 @@ colnames(light_dri) <- labels_Q18
 scree(tetrachoric(heavy_dri)$rho, pc = F) # 4 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
 
 fa_result  <- tetrachoric(heavy_dri)$rho %>%
-  fa(nfactors = 4,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+  fa(nfactors = 3,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
 fa_result
 
 # Extract loadings and convert to a data frame
@@ -94,7 +94,7 @@ ggplot(loadings_melted, aes(x = Variable, y = abs(Loading), fill = Loading)) +
 scree(tetrachoric(heavy_bar)$rho, pc = F) # 3 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
 
 fa_result  <- tetrachoric(heavy_bar)$rho %>%
-  fa(nfactors = 3,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+  fa(nfactors = 2,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
 fa_result
 
 # Extract loadings and convert to a data frame
@@ -138,7 +138,7 @@ ggplot(loadings_melted, aes(x = Variable, y = abs(Loading), fill = Loading)) +
 scree(tetrachoric(light_dri)$rho, pc = F) # 5 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
 
 fa_result  <- tetrachoric(light_dri)$rho %>%
-  fa(nfactors = 5,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+  fa(nfactors = 4,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
 fa_result
 
 # Extract loadings and convert to a data frame
@@ -175,7 +175,7 @@ ggplot(loadings_melted, aes(x = Variable, y = abs(Loading), fill = Loading)) +
 scree(tetrachoric(light_bar)$rho, pc = F) # 4 factors based on Eigenvalues < 1. Factor must explain more variance than one variable.
 
 fa_result  <- tetrachoric(light_bar)$rho %>%
-  fa(nfactors = 4,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
+  fa(nfactors = 3,fm="wls",rotate = "varimax") #Varimax is orthogonal rotation generating factors that are uncorrelated
 fa_result
 
 # Extract loadings and convert to a data frame
