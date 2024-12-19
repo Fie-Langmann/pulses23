@@ -26,7 +26,7 @@ table1 <- pulses23 %>%
   select(q_1_1, age, gender, income, education, cohabitation, employment, children, region, information) %>%
   tbl_summary(by = q_1_1,
               statistic = list(all_continuous() ~  "{median} ({p10}, {p90})",
-                               all_categorical() ~ "{n} ({p}%)"),
+                               all_categorical() ~ "{p}%"),
               digits = all_continuous() ~ 1,
               missing_text = "n missing") %>%
   add_overall() %>%
